@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>سامانه ارزیابی شرکت‌ها</title>
+<style>
+:root{
+  --primary:#4f46e5; --primary-dark:#4338ca; --primary-light:#eef2ff; --primary-bg:#f5f7ff;
+  --success:#10b981; --success-bg:#ecfdf5;
+  --danger:#ef4444; --danger-bg:#fef2f2;
+  --warning:#f59e0b; --warning-bg:#fffbeb;
+  --purple:#8b5cf6; --purple-bg:#f5f3ff;
+  --slate:#64748b; --slate-bg:#f8fafc;
+  --blue:#3b82f6; --blue-bg:#eff6ff;
+  --teal:#14b8a6; --teal-bg:#f0fdfa;
+  --g50:#f9fafb; --g100:#f3f4f6; --g200:#e5e7eb; --g300:#d1d5db;
+  --g400:#9ca3af; --g500:#6b7280; --g600:#4b5563; --g700:#374151;
+  --g800:#1f2937; --g900:#111827;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.04);
+  --shadow:0 4px 12px rgba(0,0,0,.06);
+  --shadow-lg:0 20px 50px rgba(0,0,0,.15);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Vazirmatn','Segoe UI',Tahoma,Arial,sans-serif;
+  background:#f5f7fb;color:var(--g900);direction:rtl;font-size:14px;line-height:1.6;min-height:100vh;
+}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none}
+input,select,textarea{
+  font-family:inherit;font-size:14px;padding:10px 12px;border:1.5px solid var(--g200);
+  border-radius:10px;background:#fff;color:var(--g900);width:100%;outline:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,.12);
+}
+select{
+  -webkit-appearance:none;appearance:none;cursor:pointer;padding-left:34px;
+  background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+  background-repeat:no-repeat;background-position:left 12px center;
+}
+.hidden{display:none!important}
+
+/* Login */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 50%,#0ea5e9 100%);position:relative;overflow:hidden}
+.login-wrap::before,.login-wrap::after{content:'';position:absolute;border-radius:50%;
+  background:rgba(255,255,255,.08)}
+.login-wrap::before{width:400px;height:400px;top:-150px;right:-100px}
+.login-wrap::after{width:300px;height:300px;bottom:-120px;left:-80px}
+.login-card{background:#fff;width:100%;max-width:390px;padding:36px 30px;border-radius:20px;
+  box-shadow:0 30px 60px rgba(0,0,0,.3);position:relative;z-index:1;animation:scaleIn .3s}
+@keyframes scaleIn{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+.login-card .logo-wrap{display:flex;justify-content:center;margin-bottom:14px}
+.login-card .logo-big{width:56px;height:56px;border-radius:16px;
+  background:linear-gradient(135deg,var(--primary),#7c3aed);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+  box-shadow:0 8px 24px rgba(79,70,229,.35)}
+.login-card h1{font-size:20px;text-align:center;margin-bottom:4px;color:var(--g900)}
+.login-card .sub{text-align:center;color:var(--g500);font-size:12.5px;margin-bottom:26px}
+.login-card label{display:block;margin-bottom:14px;font-size:13px;color:var(--g700);font-weight:600}
+.login-card label input{margin-top:6px}
+.login-card button{width:100%;padding:12px;background:linear-gradient(135deg,var(--primary),#7c3aed);
+  color:#fff;font-weight:700;font-size:15px;margin-top:6px;border-radius:10px;
+  box-shadow:0 8px 20px rgba(79,70,229,.3);transition:.15s}
+.login-card button:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(79,70,229,.4)}
+.login-msg{text-align:center;color:var(--danger);font-size:13px;margin-top:12px;min-height:18px}
+
+/* Header */
+.app-header{background:#fff;border-bottom:1px solid var(--g200);padding:12px 24px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:50;
+  box-shadow:var(--shadow-sm)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;color:var(--g900)}
+.brand-logo{width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--primary),#7c3aed);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  box-shadow:0 4px 12px rgba(79,70,229,.25)}
+.spacer{flex:1}
+.user-chip{display:flex;align-items:center;gap:8px;padding:6px 14px;border-radius:99px;
+  background:var(--g100);font-size:13px;color:var(--g700)}
+.user-chip .avatar{width:24px;height:24px;border-radius:50%;
+  background:linear-gradient(135deg,var(--primary),#7c3aed);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.user-chip .admin-tag{background:var(--warning-bg);color:#b45309;font-size:10.5px;
+  padding:2px 7px;border-radius:5px;font-weight:700;border:1px solid #fde68a}
+.sync-status{font-size:12px;color:var(--g500);padding:5px 10px;border-radius:99px;
+  background:var(--g50);border:1px solid var(--g200)}
+.sync-status.ok{color:#047857;background:var(--success-bg);border-color:#a7f3d0}
+.sync-status.err{color:#b91c1c;background:var(--danger-bg);border-color:#fecaca}
+
+/* Buttons */
+.btn{padding:9px 16px;border-radius:10px;font-size:13.5px;font-weight:600;
+  display:inline-flex;align-items:center;gap:6px;transition:.15s;
+  border:1.5px solid transparent;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-ghost{background:#fff;color:var(--g700);border-color:var(--g200)}
+.btn-ghost:hover{background:var(--g50);border-color:var(--g300)}
+.btn-danger{background:var(--danger-bg);color:var(--danger);border-color:#fecaca}
+.btn-danger:hover{background:#fee2e2}
+
+/* Main */
+main{padding:22px;max-width:1400px;margin:0 auto}
+.section{background:#fff;border:1px solid var(--g200);border-radius:16px;padding:20px;
+  margin-bottom:18px;box-shadow:var(--shadow-sm)}
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.section-title{font-size:15px;font-weight:800;color:var(--g900)}
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.stat-card{background:#fff;border:1px solid var(--g200);border-radius:14px;padding:14px 16px;
+  display:flex;align-items:center;gap:12px;transition:.15s}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.stat-icon{width:44px;height:44px;border-radius:12px;display:flex;
+  align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.stat-icon.indigo{background:var(--primary-light);color:var(--primary)}
+.stat-icon.green{background:var(--success-bg);color:var(--success)}
+.stat-icon.red{background:var(--danger-bg);color:var(--danger)}
+.stat-icon.slate{background:var(--slate-bg);color:var(--slate)}
+.stat-icon.purple{background:var(--purple-bg);color:var(--purple)}
+.stat-icon.blue{background:var(--blue-bg);color:var(--blue)}
+.stat-icon.teal{background:var(--teal-bg);color:var(--teal)}
+.stat-content{flex:1;min-width:0}
+.stat-value{font-size:22px;font-weight:800;color:var(--g900);line-height:1.1}
+.stat-label{font-size:12px;color:var(--g500);margin-top:2px}
+
+/* Toolbar */
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.search-box{flex:1;min-width:220px;position:relative}
+.search-box input{padding-right:38px}
+.search-box::before{content:'🔍';position:absolute;right:12px;top:50%;
+  transform:translateY(-50%);font-size:14px;opacity:.5;pointer-events:none}
+.toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Dropdown */
+.dropdown{position:relative}
+.dropdown-menu{position:absolute;top:calc(100% + 6px);left:0;background:#fff;
+  border:1px solid var(--g200);border-radius:12px;padding:6px;min-width:220px;
+  box-shadow:var(--shadow-lg);z-index:60;animation:fadeIn .12s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.dropdown-menu button{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;
+  border-radius:8px;font-size:13px;color:var(--g700);text-align:right;transition:.12s}
+.dropdown-menu button:hover{background:var(--g100);color:var(--g900)}
+
+/* Filters panel */
+.filters-panel{background:var(--g50);border:1px solid var(--g200);border-radius:12px;
+  padding:14px;margin-bottom:14px;display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.filters-panel .filter-field label{display:block;font-size:11.5px;font-weight:700;
+  color:var(--g600);margin-bottom:5px}
+.filters-clear{grid-column:1/-1;display:flex;justify-content:flex-end;padding-top:4px}
+
+/* Company cards */
+.companies-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:16px}
+@media(max-width:900px){.companies-grid{grid-template-columns:1fr}}
+.company-card{background:#fff;border:1px solid var(--g200);border-radius:16px;
+  overflow:hidden;display:flex;flex-direction:column;transition:.2s}
+.company-card:hover{box-shadow:0 12px 32px rgba(0,0,0,.08);transform:translateY(-2px)}
+.card-header{padding:16px 18px 12px;background:linear-gradient(135deg,#fafbff,#f0f4ff);
+  border-bottom:1px solid var(--g200);display:flex;align-items:flex-start;
+  justify-content:space-between;gap:12px}
+.company-title h3{font-size:15px;font-weight:800;color:var(--g900);line-height:1.3;
+  margin-bottom:4px}
+.company-id{font-size:12px;color:var(--g500);display:block}
+.result-badge{padding:4px 12px;border-radius:8px;font-size:12px;font-weight:700;white-space:nowrap}
+.result-ok{background:var(--success-bg);color:#047857;border:1px solid #a7f3d0}
+.result-no{background:var(--danger-bg);color:#b91c1c;border:1px solid #fecaca}
+.result-nc{background:var(--slate-bg);color:var(--slate);border:1px solid var(--g300)}
+.result-ref{background:var(--purple-bg);color:#6d28d9;border:1px solid #ddd6fe}
+.card-body{padding:14px 18px;flex:1}
+.meta-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.meta-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;
+  background:var(--g100);color:var(--g600);border-radius:8px;font-size:12px;font-weight:600}
+.meta-chip.received-yes{background:var(--success-bg);color:#047857}
+.meta-chip.received-no{background:var(--danger-bg);color:#b91c1c}
+.meta-chip.received-unknown{background:var(--g100);color:var(--g500)}
+.experts-label{font-size:11.5px;font-weight:700;color:var(--g500);
+  margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px}
+.experts-list{display:flex;flex-direction:column;gap:8px}
+.expert-row-display{display:flex;align-items:center;gap:8px;padding:8px 10px;
+  background:var(--g50);border-radius:9px;font-size:13px;flex-wrap:wrap;border:1px solid var(--g100)}
+.expert-row-display .icon{opacity:.7}
+.expert-row-display .name{font-weight:700;color:var(--g800);flex:1;min-width:90px}
+.grade-badge{padding:2px 9px;border-radius:6px;font-size:11px;font-weight:800;letter-spacing:.4px}
+.grade-A{background:#dcfce7;color:#166534}
+.grade-B{background:#dbeafe;color:#1e40af}
+.grade-C{background:#fef3c7;color:#92400e}
+.grade-D{background:#fee2e2;color:#991b1b}
+.pay-badge{padding:3px 9px;border-radius:6px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.pay-paid{background:var(--success-bg);color:#047857}
+.pay-unpaid{background:var(--danger-bg);color:#b91c1c}
+.pay-part{background:var(--warning-bg);color:#b45309}
+.pay-none{background:var(--g100);color:var(--g500)}
+.payid-chip{padding:2px 8px;background:#eff6ff;color:#1e40af;border-radius:6px;
+  font-size:11px;font-weight:700;border:1px solid #bfdbfe;white-space:nowrap;width:100%}
+.card-footer{padding:12px 18px;background:var(--g50);border-top:1px solid var(--g200);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.updated-info{font-size:11.5px;color:var(--g500)}
+.card-actions{display:flex;gap:6px}
+.btn-sm{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;
+  display:inline-flex;align-items:center;gap:5px;transition:.15s;
+  border:1.5px solid transparent}
+.btn-sm.edit{background:var(--primary-light);color:var(--primary-dark);border-color:#c7d2fe}
+.btn-sm.edit:hover{background:#e0e7ff}
+.btn-sm.del{background:var(--danger-bg);color:var(--danger);border-color:#fecaca}
+.btn-sm.del:hover{background:#fee2e2}
+
+/* Empty */
+.empty-state{padding:60px 24px;text-align:center;background:#fff;
+  border:1px dashed var(--g300);border-radius:16px}
+.empty-icon{font-size:56px;margin-bottom:14px;opacity:.6}
+.empty-title{font-size:17px;font-weight:800;color:var(--g800);margin-bottom:6px}
+.empty-text{font-size:13.5px;color:var(--g500);margin-bottom:18px}
+.empty-filtered{padding:50px 24px;text-align:center;color:var(--g500);font-size:14px}
+
+/* Modal */
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.6);
+  backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;
+  padding:20px;z-index:100;animation:fadeIn .15s}
+.modal{background:#fff;border-radius:20px;width:100%;max-width:800px;max-height:92vh;
+  overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 60px rgba(0,0,0,.3);
+  animation:slideUp .22s ease-out}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--g200);
+  display:flex;align-items:center;justify-content:space-between;gap:10px}
+.modal-header h2{font-size:17px;font-weight:800;color:var(--g900)}
+.modal-close{width:34px;height:34px;border-radius:9px;display:flex;
+  align-items:center;justify-content:center;color:var(--g500);font-size:22px;
+  line-height:1;transition:.15s}
+.modal-close:hover{background:var(--g100);color:var(--g800)}
+.modal-body{padding:20px 24px;overflow-y:auto;flex:1}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--g200);
+  display:flex;gap:10px;justify-content:flex-end;background:var(--g50)}
+
+/* Form */
+.form-section{margin-bottom:22px}
+.form-section:last-child{margin-bottom:0}
+.form-section-title{font-size:13px;font-weight:800;color:var(--g700);
+  margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--g100);
+  display:flex;align-items:center;gap:8px}
+.form-section-title::before{content:'';width:3px;height:14px;
+  background:var(--primary);border-radius:2px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid.full{grid-template-columns:1fr}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}}
+.field label{display:block;font-size:12.5px;font-weight:700;color:var(--g700);margin-bottom:6px}
+.field label .req{color:var(--danger)}
+.field label .admin-tag{background:var(--warning-bg);color:#b45309;
+  font-size:10.5px;padding:1px 7px;border-radius:5px;margin-right:4px;
+  font-weight:700;border:1px solid #fde68a}
+.expert-block{background:var(--g50);border:1px solid var(--g200);
+  border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.expert-block-title{font-size:12.5px;font-weight:800;color:var(--g600);
+  margin-bottom:9px;display:flex;align-items:center;gap:6px}
+.expert-block-title .tag{background:var(--primary-light);color:var(--primary-dark);
+  font-size:10.5px;padding:1px 8px;border-radius:5px;font-weight:800;
+  border:1px solid #c7d2fe}
+.expert-fields{display:grid;grid-template-columns:2fr 0.9fr 1.3fr 1.6fr;gap:8px}
+@media(max-width:720px){.expert-fields{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.expert-fields{grid-template-columns:1fr}}
+
+/* Settings modal */
+.hint{font-size:12.5px;color:var(--g600);line-height:1.9;background:var(--g50);
+  border:1px dashed var(--g300);border-radius:10px;padding:12px;margin-bottom:16px}
+.hint code{background:var(--g200);padding:1px 6px;border-radius:4px;font-size:11.5px}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;
+  transform:translateX(-50%) translateY(30px);background:var(--g900);color:#fff;
+  padding:13px 26px;border-radius:99px;font-size:13.5px;font-weight:600;
+  box-shadow:0 12px 32px rgba(0,0,0,.3);opacity:0;pointer-events:none;
+  transition:.25s;z-index:200}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{background:var(--danger)}
+.toast.success{background:var(--success)}
+
+@media(max-width:600px){
+  .app-header{padding:10px 14px;gap:8px}
+  main{padding:14px}
+  .section{padding:16px}
+  .brand{font-size:14px}
+  .user-chip{font-size:12px;padding:5px 10px}
+  .btn{padding:8px 12px;font-size:12.5px}
+  .stat-card{padding:12px 14px}
+  .stat-icon{width:38px;height:38px;font-size:18px}
+  .stat-value{font-size:19px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ صفحه ورود ============ -->
+<div id="login-view" class="login-wrap">
+  <form class="login-card" id="login-form">
+    <div class="logo-wrap"><div class="logo-big">✔</div></div>
+    <h1>سامانه ارزیابی شرکت‌ها</h1>
+    <p class="sub">لطفاً وارد حساب خود شوید</p>
+    <label>نام کاربری
+      <input id="l-user" required autocomplete="username" placeholder="نام کاربری">
+    </label>
+    <label>رمز عبور
+      <input id="l-pass" type="password" required autocomplete="current-password" placeholder="••••••">
+    </label>
+    <button type="submit">ورود به سامانه</button>
+    <p class="login-msg" id="login-msg"></p>
+  </form>
+</div>
+
+<!-- ============ برنامه اصلی ============ -->
+<div id="app-view" class="hidden">
+
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-logo">✔</div>
+      <span>سامانه ارزیابی</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="user-chip">
+      <div class="avatar" id="user-avatar">ا</div>
+      <span id="hdr-user">—</span>
+      <span class="admin-tag hidden" id="admin-badge">ادمین</span>
+    </div>
+    <span class="sync-status" id="sync-status">ذخیره محلی</span>
+    <button class="btn btn-ghost" id="btn-sync" title="همگام‌سازی">🔄</button>
+    <button class="btn btn-ghost" id="btn-settings" title="تنظیمات">⚙</button>
+    <button class="btn btn-danger" id="btn-logout">خروج</button>
+  </header>
+
+  <main>
+
+    <div class="stats-grid" id="stats"></div>
+
+    <section class="section" style="margin-top:18px">
+      <div class="section-header">
+        <div class="section-title">🏢 شرکت‌ها</div>
+        <div class="spacer"></div>
+        <div class="toolbar-actions">
+          <button class="btn btn-ghost" id="btn-toggle-filters">🔍 فیلترها</button>
+          <div class="dropdown">
+            <button class="btn btn-ghost" id="btn-tools">🛠 ابزارها ▾</button>
+            <div class="dropdown-menu hidden" id="tools-menu">
+              <button data-action="export-pay">💰 خروجی پرداخت کارشناسان (Excel)</button>
+              <button data-action="export-csv">📋 خروجی کامل (CSV)</button>
+              <button data-action="export-json">💾 پشتیبان JSON</button>
+              <button data-action="import-json">📂 بازیابی از JSON</button>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="btn-add">+ افزودن شرکت</button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-box" style="flex:1">
+          <input id="search" placeholder="جستجو در نام شرکت، شناسه ملی، کارشناس، شناسه پرداخت کارشناس...">
+        </div>
+      </div>
+
+      <div class="filters-panel hidden" id="filters-panel">
+        <div class="filter-field">
+          <label>نوع پرونده</label>
+          <select id="filter-casetype">
+            <option value="">همه</option>
+            <option value="غربال فنی">غربال فنی</option>
+            <option value="نوشناس">نوشناس</option>
+            <option value="ارزیابی مجدد">ارزیابی مجدد</option>
+            <option value="بررسی مجدد">بررسی مجدد</option>
+            <option value="ارزیابی حضوری">ارزیابی حضوری</option>
+            <option value="تولید بار اول">تولید بار اول</option>
+            <option value="عمق بومی سازی">عمق بومی سازی</option>
+          </select>
+        </div>
+        <div class="filter-field">
+          <label>گرید کارشناس</label>
+          <select id="filter-grade">
+            <option value="">همه</option>
+            <option value="A">A</option><option value="B">B</option>
+            <option value="C">C</option><option value="D">D</option>
+          </select>
+        </div>
+        <div class="filter-field">
+          <label>نتیجه</label>
+          <select id="filter-result">
+            <option value="">همه</option>
+            <option value="تایید">تایید</option>
+            <option value="عدم تایید">عدم تایید</option>
+            <option value="عدم همکاری شرکت">عدم همکاری شرکت</option>
+            <option value="ارجاع به حوزه دیگر">ارجاع به حوزه دیگر</option>
+          </select>
+        </div>
+        <div class="filter-field">
+          <label>وضعیت پرداخت کارشناس</label>
+          <select id="filter-pay">
+            <option value="">همه</option>
+            <option value="پرداخت شده">پرداخت شده</option>
+            <option value="پرداخت نشده">پرداخت نشده</option>
+            <option value="پرداخت ناقص">پرداخت ناقص</option>
+          </select>
+        </div>
+        <div class="filter-field admin-only hidden">
+          <label>دریافت از معاونت</label>
+          <select id="filter-received">
+            <option value="">همه</option>
+            <option value="yes">دریافت شد</option>
+            <option value="no">دریافت نشد</option>
+            <option value="unknown">نامشخص</option>
+          </select>
+        </div>
+        <div class="filters-clear">
+          <button class="btn btn-ghost" id="btn-clear-filters">حذف فیلترها</button>
+        </div>
+      </div>
+
+      <div class="companies-grid" id="companies-grid"></div>
+      <div class="empty-state hidden" id="empty-state">
+        <div class="empty-icon">📭</div>
+        <div class="empty-title">هنوز شرکتی ثبت نشده</div>
+        <div class="empty-text">برای شروع، اولین شرکت را اضافه کنید.</div>
+        <button class="btn btn-primary" id="btn-add-empty">+ افزودن اولین شرکت</button>
+      </div>
+      <div class="empty-filtered hidden" id="empty-filtered">
+        هیچ شرکتی با فیلترهای انتخابی پیدا نشد.
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============ مودال فرم ============ -->
+<div class="modal-backdrop hidden" id="modal-form">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="form-title">ثبت شرکت جدید</h2>
+      <button class="modal-close" id="btn-close-form" type="button">×</button>
+    </div>
+    <div class="modal-body">
+      <form id="company-form">
+
+        <div class="form-section">
+          <div class="form-section-title">اطلاعات شرکت</div>
+          <div class="form-grid">
+            <div class="field">
+              <label>نام شرکت <span class="req">*</span></label>
+              <input id="f-company" required placeholder="نام کامل شرکت">
+            </div>
+            <div class="field">
+              <label>شناسه ملی <span class="req">*</span></label>
+              <input id="f-nationalid" required inputmode="numeric" placeholder="۱۱ رقم" maxlength="20">
+            </div>
+            <div class="field">
+              <label>نوع پرونده</label>
+              <select id="f-casetype">
+                <option value="">— انتخاب نشده —</option>
+                <option value="غربال فنی">غربال فنی</option>
+                <option value="نوشناس">نوشناس</option>
+                <option value="ارزیابی مجدد">ارزیابی مجدد</option>
+                <option value="بررسی مجدد">بررسی مجدد</option>
+                <option value="ارزیابی حضوری">ارزیابی حضوری</option>
+                <option value="تولید بار اول">تولید بار اول</option>
+                <option value="عمق بومی سازی">عمق بومی سازی</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>نتیجه</label>
+              <select id="f-result">
+                <option value="تایید">تایید</option>
+                <option value="عدم تایید">عدم تایید</option>
+                <option value="عدم همکاری شرکت">عدم همکاری شرکت</option>
+                <option value="ارجاع به حوزه دیگر">ارجاع به حوزه دیگر</option>
+              </select>
+            </div>
+            <div class="field admin-only hidden" style="grid-column:1/-1">
+              <label>دریافت پول پرونده از معاونت <span class="admin-tag">فقط ادمین</span></label>
+              <select id="f-received">
+                <option value="">— نامشخص —</option>
+                <option value="yes">بله، دریافت شد</option>
+                <option value="no">خیر، دریافت نشد</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">کارشناسان فنی (تا ۳ نفر)</div>
+
+          <div class="expert-block">
+            <div class="expert-block-title">کارشناس فنی ۱ <span class="tag">اصلی</span></div>
+            <div class="expert-fields">
+              <input id="f-exp1-name" placeholder="نام کارشناس">
+              <select id="f-exp1-grade">
+                <option value="A">گرید A</option><option value="B">گرید B</option>
+                <option value="C">گرید C</option><option value="D">گرید D</option>
+              </select>
+              <select id="f-exp1-pay">
+                <option value="">— پرداخت —</option>
+                <option value="پرداخت شده">✓ پرداخت شده</option>
+                <option value="پرداخت ناقص">◐ پرداخت ناقص</option>
+                <option value="پرداخت نشده">✗ پرداخت نشده</option>
+              </select>
+              <input id="f-exp1-payid" placeholder="شناسه پرداخت کارشناس">
+            </div>
+          </div>
+
+          <div class="expert-block">
+            <div class="expert-block-title">کارشناس فنی ۲</div>
+            <div class="expert-fields">
+              <input id="f-exp2-name" placeholder="نام کارشناس (اختیاری)">
+              <select id="f-exp2-grade">
+                <option value="A">گرید A</option><option value="B">گرید B</option>
+                <option value="C">گرید C</option><option value="D">گرید D</option>
+              </select>
+              <select id="f-exp2-pay">
+                <option value="">— پرداخت —</option>
+                <option value="پرداخت شده">✓ پرداخت شده</option>
+                <option value="پرداخت ناقص">◐ پرداخت ناقص</option>
+                <option value="پرداخت نشده">✗ پرداخت نشده</option>
+              </select>
+              <input id="f-exp2-payid" placeholder="شناسه پرداخت کارشناس">
+            </div>
+          </div>
+
+          <div class="expert-block">
+            <div class="expert-block-title">کارشناس فنی ۳</div>
+            <div class="expert-fields">
+              <input id="f-exp3-name" placeholder="نام کارشناس (اختیاری)">
+              <select id="f-exp3-grade">
+                <option value="A">گرید A</option><option value="B">گرید B</option>
+                <option value="C">گرید C</option><option value="D">گرید D</option>
+              </select>
+              <select id="f-exp3-pay">
+                <option value="">— پرداخت —</option>
+                <option value="پرداخت شده">✓ پرداخت شده</option>
+                <option value="پرداخت ناقص">◐ پرداخت ناقص</option>
+                <option value="پرداخت نشده">✗ پرداخت نشده</option>
+              </select>
+              <input id="f-exp3-payid" placeholder="شناسه پرداخت کارشناس">
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="btn-cancel-form">انصراف</button>
+      <button class="btn btn-primary" id="btn-save-form">💾 ذخیره</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ مودال تنظیمات ============ -->
+<div class="modal-backdrop hidden" id="modal-settings">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-header">
+      <h2>⚙ تنظیمات همگام‌سازی</h2>
+      <button class="modal-close" id="btn-close-settings">×</button>
+    </div>
+    <div class="modal-body">
+      <p class="hint">
+        برای اشتراک داده بین ۶ کاربر روی دستگاه‌های مختلف، یک آدرس ذخیره‌سازی ابری (GET/PUT) وارد کنید.<br>
+        مثال با سرویس رایگان <code>jsonblob.com</code>:<br>
+        ۱) به <code>jsonblob.com/api</code> بروید و Blob خالی بسازید.<br>
+        ۲) آدرس <code>https://jsonblob.com/api/jsonBlob/&lt;ID&gt;</code> را اینجا وارد کنید.<br>
+        در غیر این صورت داده‌ها فقط روی همین مرورگر ذخیره می‌شوند.
+      </p>
+      <div class="field" style="margin-bottom:14px">
+        <label>آدرس همگام‌سازی</label>
+        <input id="cfg-url" placeholder="https://jsonblob.com/api/jsonBlob/....">
+      </div>
+      <div class="field" style="margin-bottom:14px">
+        <label>هدرهای احراز هویت (JSON — اختیاری)</label>
+        <textarea id="cfg-headers" rows="2" placeholder='{"X-Master-Key":"..."}'></textarea>
+      </div>
+      <div class="field">
+        <label>فاصله بروزرسانی (ثانیه — صفر = خاموش)</label>
+        <input id="cfg-interval" type="number" min="0" value="20">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="btn-close-settings-2">بستن</button>
+      <button class="btn btn-primary" id="btn-save-cfg">ذخیره</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="file-import" accept=".json" class="hidden">
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   ۱) کاربران
+   ========================================================= */
+const USERS = [
+  { u: 'sajjad',       p: '1570555451', name: 'ادمین سجاد',    isAdmin: true  },
+  { u: 'hassanzadeh',  p: '3080058585', name: 'محمد حسن زاده', isAdmin: false },
+  { u: 'amin',         p: '0014960478', name: 'امین',          isAdmin: false },
+  { u: 'amir',         p: '0923901698', name: 'امیر',          isAdmin: false },
+  { u: 'morteza zadeh', p: '9373989833', name: 'مرتضی زاده',    isAdmin: false },
+  { u: 'Arejani',      p: '9395793886', name: 'آرمان جانی',    isAdmin: false }
+];
+
+/* =========================================================
+   ۲) وضعیت
+   ========================================================= */
+const KEY_DATA='coapp_records_v3', KEY_CFG='coapp_config_v3', KEY_SESSION='coapp_session_v3';
+let records = {};
+let currentUser = null;
+let editId = null;
+let cfg = { url:'', headers:'', interval:20 };
+let syncing = false, timer = null;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+const toEn = s => String(s ?? '').replace(/[۰-۹]/g, d => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)))
+                                .replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
+const normU = s => String(s ?? '').toLowerCase().replace(/\s+/g,'').trim();
+const normP = s => toEn(String(s ?? '')).trim();
+const isAdmin = () => !!(currentUser && currentUser.isAdmin);
+
+function toast(msg, type='') {
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type ? ' ' + type : '');
+  t.classList.add('show');
+  clearTimeout(t._h);
+  t._h = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* =========================================================
+   ۳) نرمال‌سازی و ذخیره‌سازی
+   ========================================================= */
+function normalizeRecord(r) {
+  if (!r || typeof r !== 'object') return r;
+  const companyGrade = r.grade || 'A';
+
+  // سازگاری با ساختارهای قدیمی
+  if (!Array.isArray(r.experts)) {
+    r.experts = [];
+    if (r.expert && String(r.expert).trim()) {
+      r.experts.push({
+        name: r.expert,
+        grade: companyGrade,
+        payStatus: r.payStatus || '',
+        payId: ''
+      });
+    }
+  }
+
+  r.experts = r.experts.map((e, idx) => {
+    const out = {
+      name: e.name || '',
+      grade: e.grade || companyGrade,
+      payStatus: e.payStatus || '',
+      payId: e.payId || ''
+    };
+    // انتقال شناسه پرداخت قدیمی (سطح شرکت) به اولین کارشناس
+    if (idx === 0 && !out.payId && r.payId) out.payId = r.payId;
+    return out;
+  });
+
+  while (r.experts.length < 3) r.experts.push({ name:'', grade:'A', payStatus:'', payId:'' });
+
+  // پاک‌سازی فیلدهای قدیمی
+  delete r.grade; delete r.expert; delete r.payStatus; delete r.payId;
+
+  if (r.receivedFromDeputy === undefined) r.receivedFromDeputy = null;
+  if (r.caseType === undefined) r.caseType = '';
+  return r;
+}
+
+function loadLocal() {
+  try {
+    const raw = JSON.parse(
+      localStorage.getItem(KEY_DATA)
+      || localStorage.getItem('coapp_records_v2')
+      || localStorage.getItem('coapp_records_v1')
+      || '{}'
+    );
+    records = {};
+    for (const id in raw) records[id] = normalizeRecord(raw[id]);
+  } catch(e) { records = {}; }
+}
+function saveLocal() { localStorage.setItem(KEY_DATA, JSON.stringify(records)); }
+
+function loadCfg() {
+  try { const c = JSON.parse(localStorage.getItem(KEY_CFG) || '{}');
+    cfg = { url:c.url||'', headers:c.headers||'', interval:(c.interval ?? 20) };
+  } catch(e) {}
+}
+function saveCfg() { localStorage.setItem(KEY_CFG, JSON.stringify(cfg)); }
+
+/* =========================================================
+   ۴) ورود / خروج
+   ========================================================= */
+$('login-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const u = normU($('l-user').value);
+  const p = normP($('l-pass').value);
+  const found = USERS.find(x => normU(x.u) === u && normP(x.p) === p);
+  if (!found) { $('login-msg').textContent = 'نام کاربری یا رمز عبور اشتباه است.'; return; }
+  currentUser = { u: found.u, name: found.name, isAdmin: !!found.isAdmin };
+  sessionStorage.setItem(KEY_SESSION, JSON.stringify(currentUser));
+  $('login-msg').textContent = '';
+  $('l-pass').value = '';
+  enterApp();
+});
+
+function enterApp() {
+  $('login-view').classList.add('hidden');
+  $('app-view').classList.remove('hidden');
+  $('hdr-user').textContent = currentUser.name;
+  $('user-avatar').textContent = currentUser.name.charAt(0);
+  $('admin-badge').classList.toggle('hidden', !isAdmin());
+  document.querySelectorAll('.admin-only').forEach(el => el.classList.toggle('hidden', !isAdmin()));
+  loadLocal();
+  render();
+  startAutoSync();
+  pullPush();
+}
+
+function logout() {
+  sessionStorage.removeItem(KEY_SESSION);
+  currentUser = null;
+  clearInterval(timer);
+  $('app-view').classList.add('hidden');
+  $('login-view').classList.remove('hidden');
+  $('l-user').value = '';
+}
+$('btn-logout').addEventListener('click', () => {
+  if (confirm('از سامانه خارج می‌شوید؟')) logout();
+});
+
+/* =========================================================
+   ۵) همگام‌سازی
+   ========================================================= */
+function mergeData(local, remote) {
+  const out = Object.assign({}, local);
+  for (const id in remote) {
+    const r = normalizeRecord(remote[id]);
+    if (!r || typeof r !== 'object') continue;
+    const l = out[id];
+    if (!l || (r.updatedAt||0) > (l.updatedAt||0)) out[id] = r;
+  }
+  return out;
+}
+function setSyncStatus(txt, cls) {
+  const el = $('sync-status');
+  el.textContent = txt;
+  el.className = 'sync-status' + (cls ? ' ' + cls : '');
+}
+async function pullPush() {
+  if (!cfg.url || syncing || !currentUser) return;
+  syncing = true;
+  setSyncStatus('همگام‌سازی…');
+  let headers = { 'Content-Type':'application/json' };
+  try { Object.assign(headers, JSON.parse(cfg.headers || '{}')); } catch(e){}
+  try {
+    const res = await fetch(cfg.url, { headers, cache:'no-store' });
+    let remote = {};
+    if (res.ok) { const txt = await res.text(); if (txt.trim()) remote = JSON.parse(txt); }
+    records = mergeData(records, remote || {});
+    saveLocal(); render();
+    const put = await fetch(cfg.url, { method:'PUT', headers, body:JSON.stringify(records) });
+    if (!put.ok) throw new Error('PUT '+put.status);
+    setSyncStatus('همگام ✓ ' + new Date().toLocaleTimeString('fa-IR'), 'ok');
+  } catch(err) {
+    setSyncStatus('خطا', 'err');
+  } finally { syncing = false; }
+}
+function startAutoSync() {
+  clearInterval(timer);
+  if (cfg.url && cfg.interval > 0) timer = setInterval(pullPush, cfg.interval*1000);
+}
+$('btn-sync').addEventListener('click', () => {
+  if (!cfg.url) { toast('ابتدا آدرس همگام‌سازی را در تنظیمات وارد کنید', 'error'); return; }
+  pullPush();
+});
+
+/* =========================================================
+   ۶) کمکی‌ها
+   ========================================================= */
+function getExperts(r) { return (r.experts||[]).filter(e => e && e.name && String(e.name).trim()); }
+function payIcon(s) {
+  if (s === 'پرداخت شده') return '✓';
+  if (s === 'پرداخت ناقص') return '◐';
+  if (s === 'پرداخت نشده') return '✗';
+  return '—';
+}
+function payCls(s) {
+  if (s === 'پرداخت شده') return 'pay-paid';
+  if (s === 'پرداخت ناقص') return 'pay-part';
+  if (s === 'پرداخت نشده') return 'pay-unpaid';
+  return 'pay-none';
+}
+function resultCls(r) {
+  if (r === 'تایید') return 'result-ok';
+  if (r === 'عدم تایید') return 'result-no';
+  if (r === 'ارجاع به حوزه دیگر') return 'result-ref';
+  return 'result-nc';
+}
+function receivedLabel(v) {
+  if (v === true) return { cls:'received-yes', txt:'💰 دریافت شد از معاونت' };
+  if (v === false) return { cls:'received-no', txt:'❌ دریافت نشد از معاونت' };
+  return { cls:'received-unknown', txt:'— وضعیت دریافت نامشخص' };
+}
+
+/* =========================================================
+   ۷) رندر
+   ========================================================= */
+function getFilteredList() {
+  const q  = $('search').value.trim().toLowerCase();
+  const fc = $('filter-casetype').value;
+  const fg = $('filter-grade').value;
+  const fr = $('filter-result').value;
+  const fp = $('filter-pay').value;
+  const frec = $('filter-received') ? $('filter-received').value : '';
+
+  return Object.values(records)
+    .filter(r => !r.deleted)
+    .filter(r => {
+      if (fc && r.caseType !== fc) return false;
+      if (fr && r.result !== fr) return false;
+      if (fg && !getExperts(r).some(e => e.grade === fg)) return false;
+      if (fp && !getExperts(r).some(e => e.payStatus === fp)) return false;
+      if (frec) {
+        if (frec === 'yes' && r.receivedFromDeputy !== true) return false;
+        if (frec === 'no' && r.receivedFromDeputy !== false) return false;
+        if (frec === 'unknown' && r.receivedFromDeputy !== null) return false;
+      }
+      if (q) {
+        const expNames  = getExperts(r).map(e => e.name).join(' ');
+        const expPayIds = getExperts(r).map(e => e.payId).filter(Boolean).join(' ');
+        const hay = [r.companyName, r.nationalId, r.caseType, r.result, expNames, expPayIds]
+          .join(' ').toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    })
+    .sort((a,b) => (b.updatedAt||0) - (a.updatedAt||0));
+}
+
+function renderStats() {
+  const all = Object.values(records).filter(r => !r.deleted);
+  const cnt = k => all.filter(r => r.result === k).length;
+  let totalExperts = 0, paidExperts = 0;
+  all.forEach(r => getExperts(r).forEach(e => {
+    totalExperts++; if (e.payStatus === 'پرداخت شده') paidExperts++;
+  }));
+  const receivedCount = all.filter(r => r.receivedFromDeputy === true).length;
+
+  let html = `
+    <div class="stat-card">
+      <div class="stat-icon indigo">📋</div>
+      <div class="stat-content"><div class="stat-value">${all.length}</div><div class="stat-label">کل شرکت‌ها</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">✅</div>
+      <div class="stat-content"><div class="stat-value">${cnt('تایید')}</div><div class="stat-label">تایید شده</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon red">❌</div>
+      <div class="stat-content"><div class="stat-value">${cnt('عدم تایید')}</div><div class="stat-label">عدم تایید</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon slate">🚫</div>
+      <div class="stat-content"><div class="stat-value">${cnt('عدم همکاری شرکت')}</div><div class="stat-label">عدم همکاری</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon purple">🔀</div>
+      <div class="stat-content"><div class="stat-value">${cnt('ارجاع به حوزه دیگر')}</div><div class="stat-label">ارجاع</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue">👥</div>
+      <div class="stat-content"><div class="stat-value">${paidExperts}/${totalExperts}</div><div class="stat-label">پرداخت کارشناسان</div></div>
+    </div>`;
+
+  if (isAdmin()) {
+    html += `
+      <div class="stat-card">
+        <div class="stat-icon teal">💰</div>
+        <div class="stat-content"><div class="stat-value">${receivedCount}</div><div class="stat-label">دریافت از معاونت</div></div>
+      </div>`;
+  }
+  $('stats').innerHTML = html;
+}
+
+function render() {
+  renderStats();
+  const list = getFilteredList();
+  const grid = $('companies-grid');
+  const emptyState = $('empty-state');
+  const emptyFiltered = $('empty-filtered');
+
+  const totalRecords = Object.values(records).filter(r => !r.deleted).length;
+  if (totalRecords === 0) {
+    emptyState.classList.remove('hidden');
+    emptyFiltered.classList.add('hidden');
+    grid.innerHTML = '';
+    return;
+  }
+  emptyState.classList.add('hidden');
+  if (list.length === 0) {
+    emptyFiltered.classList.remove('hidden');
+    grid.innerHTML = '';
+    return;
+  }
+  emptyFiltered.classList.add('hidden');
+
+  grid.innerHTML = list.map(r => {
+    const experts = getExperts(r);
+    const expertHtml = experts.length
+      ? experts.map(e => `
+        <div class="expert-row-display">
+          <span class="icon">👤</span>
+          <span class="name">${esc(e.name)}</span>
+          <span class="grade-badge grade-${esc(e.grade||'A')}">${esc(e.grade||'A')}</span>
+          <span class="pay-badge ${payCls(e.payStatus)}">${payIcon(e.payStatus)} ${esc(e.payStatus || 'نامشخص')}</span>
+          ${e.payId ? `<span class="payid-chip">💳 شناسه پرداخت: ${esc(e.payId)}</span>` : ''}
+        </div>`).join('')
+      : '<span style="color:#9ca3af;font-size:12.5px;padding:4px 0;display:block">— کارشناس ثبت نشده —</span>';
+
+    let adminChip = '';
+    if (isAdmin()) {
+      const info = receivedLabel(r.receivedFromDeputy);
+      adminChip = `<span class="meta-chip ${info.cls}">${info.txt}</span>`;
+    }
+
+    return `
+    <article class="company-card">
+      <div class="card-header">
+        <div class="company-title">
+          <h3>${esc(r.companyName)}</h3>
+          <span class="company-id">شناسه ملی: ${esc(r.nationalId)}</span>
+        </div>
+        <span class="result-badge ${resultCls(r.result)}">${esc(r.result || '—')}</span>
+      </div>
+      <div class="card-body">
+        <div class="meta-chips">
+          ${r.caseType ? `<span class="meta-chip">📁 ${esc(r.caseType)}</span>` : ''}
+          ${adminChip}
+        </div>
+        <div class="experts-label">کارشناسان فنی و پرداخت‌ها</div>
+        <div class="experts-list">${expertHtml}</div>
+      </div>
+      <div class="card-footer">
+        <span class="updated-info">
+          ${r.updatedAt ? 'آخرین ویرایش: ' + new Date(r.updatedAt).toLocaleString('fa-IR') : ''}
+          ${r.updatedBy ? ' · ' + esc(r.updatedBy) : ''}
+        </span>
+        <div class="card-actions">
+          <button class="btn-sm edit" data-edit="${esc(r.id)}">✏️ ویرایش</button>
+          <button class="btn-sm del" data-del="${esc(r.id)}">🗑 حذف</button>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+$('companies-grid').addEventListener('click', e => {
+  const ed = e.target.closest('[data-edit]');
+  const dl = e.target.closest('[data-del]');
+  if (ed) openForm(ed.dataset.edit);
+  if (dl) removeRecord(dl.dataset.del);
+});
+
+/* =========================================================
+   ۸) فرم ثبت/ویرایش
+   ========================================================= */
+function openForm(id) {
+  editId = id || null;
+  $('company-form').reset();
+  ['1','2','3'].forEach(i => { $('f-exp'+i+'-grade').value = 'A'; });
+
+  if (editId && records[editId]) {
+    const r = records[editId];
+    $('form-title').textContent = 'ویرایش شرکت: ' + r.companyName;
+    $('f-company').value = r.companyName || '';
+    $('f-nationalid').value = r.nationalId || '';
+    $('f-casetype').value = r.caseType || '';
+    $('f-result').value = r.result || 'تایید';
+    if (isAdmin()) {
+      $('f-received').value = r.receivedFromDeputy === true ? 'yes'
+                          : r.receivedFromDeputy === false ? 'no' : '';
+    }
+    const ex = (r.experts||[]).slice(0,3);
+    while (ex.length < 3) ex.push({ name:'', grade:'A', payStatus:'', payId:'' });
+    for (let i = 1; i <= 3; i++) {
+      const e = ex[i-1];
+      $('f-exp'+i+'-name').value    = e.name || '';
+      $('f-exp'+i+'-grade').value   = e.grade || 'A';
+      $('f-exp'+i+'-pay').value     = e.payStatus || '';
+      $('f-exp'+i+'-payid').value   = e.payId || '';
+    }
+  } else {
+    $('form-title').textContent = 'ثبت شرکت جدید';
+    if (isAdmin()) $('f-received').value = '';
+  }
+  document.querySelectorAll('.admin-only').forEach(el => el.classList.toggle('hidden', !isAdmin()));
+  $('modal-form').classList.remove('hidden');
+}
+
+function closeForm() {
+  $('modal-form').classList.add('hidden');
+  editId = null;
+}
+
+$('btn-add').addEventListener('click', () => openForm(null));
+$('btn-add-empty').addEventListener('click', () => openForm(null));
+$('btn-close-form').addEventListener('click', closeForm);
+$('btn-cancel-form').addEventListener('click', closeForm);
+$('modal-form').addEventListener('click', e => { if (e.target === $('modal-form')) closeForm(); });
+
+$('btn-save-form').addEventListener('click', () => {
+  $('company-form').dispatchEvent(new Event('submit', { cancelable: true }));
+});
+
+$('company-form').addEventListener('submit', e => {
+  e.preventDefault();
+  if (!currentUser) return;
+
+  const companyName = $('f-company').value.trim();
+  const nationalId  = toEn($('f-nationalid').value.trim());
+
+  if (!companyName || !nationalId) { toast('نام شرکت و شناسه ملی الزامی است', 'error'); return; }
+
+  const dup = Object.values(records).find(r =>
+    !r.deleted && toEn(r.nationalId) === nationalId && r.id !== editId
+  );
+  if (dup) {
+    if (!confirm('شرکتی با این شناسه ملی قبلاً ثبت شده («' + dup.companyName + '»). ادامه می‌دهید؟')) return;
+  }
+
+  const experts = [];
+  for (let i = 1; i <= 3; i++) {
+    const name    = $('f-exp'+i+'-name').value.trim();
+    const grade   = $('f-exp'+i+'-grade').value;
+    const pay     = $('f-exp'+i+'-pay').value;
+    const payId   = toEn($('f-exp'+i+'-payid').value.trim());
+    if (name) experts.push({ name, grade, payStatus: pay, payId });
+  }
+
+  const data = {
+    companyName,
+    nationalId,
+    caseType: $('f-casetype').value,
+    result: $('f-result').value,
+    experts
+  };
+
+  if (isAdmin()) {
+    const rv = $('f-received').value;
+    data.receivedFromDeputy = rv === 'yes' ? true : rv === 'no' ? false : null;
+  } else if (editId && records[editId]) {
+    data.receivedFromDeputy = records[editId].receivedFromDeputy;
+  } else {
+    data.receivedFromDeputy = null;
+  }
+
+  const now = Date.now();
+  if (editId && records[editId]) {
+    records[editId] = Object.assign({}, records[editId], data, {
+      updatedAt: now, updatedBy: currentUser.name
+    });
+    toast('تغییرات ذخیره شد', 'success');
+  } else {
+    const id = uid();
+    records[id] = Object.assign({ id }, data, {
+      createdAt: now, updatedAt: now,
+      createdBy: currentUser.name, updatedBy: currentUser.name, deleted: false
+    });
+    toast('شرکت جدید ثبت شد', 'success');
+  }
+
+  saveLocal();
+  closeForm();
+  render();
+  pullPush();
+});
+
+function removeRecord(id) {
+  const r = records[id];
+  if (!r) return;
+  if (!confirm('شرکت «' + r.companyName + '» حذف شود؟')) return;
+  records[id] = Object.assign({}, r, {
+    deleted: true, updatedAt: Date.now(), updatedBy: currentUser.name
+  });
+  saveLocal(); render(); pullPush();
+  toast('رکورد حذف شد', 'success');
+}
+
+/* =========================================================
+   ۹) فیلترها و ابزارها
+   ========================================================= */
+$('btn-toggle-filters').addEventListener('click', () => {
+  $('filters-panel').classList.toggle('hidden');
+});
+['search','filter-casetype','filter-grade','filter-result','filter-pay','filter-received'].forEach(id => {
+  const el = $(id); if (!el) return;
+  el.addEventListener('input', render);
+  el.addEventListener('change', render);
+});
+$('btn-clear-filters').addEventListener('click', () => {
+  $('search').value = '';
+  $('filter-casetype').value = '';
+  $('filter-grade').value = '';
+  $('filter-result').value = '';
+  $('filter-pay').value = '';
+  if ($('filter-received')) $('filter-received').value = '';
+  render();
+});
+
+$('btn-tools').addEventListener('click', e => {
+  e.stopPropagation();
+  $('tools-menu').classList.toggle('hidden');
+});
+document.addEventListener('click', e => {
+  if (!$('tools-menu').classList.contains('hidden') && !e.target.closest('.dropdown')) {
+    $('tools-menu').classList.add('hidden');
+  }
+});
+$('tools-menu').addEventListener('click', e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  $('tools-menu').classList.add('hidden');
+  if (action === 'export-pay') exportPay();
+  else if (action === 'export-csv') exportFull();
+  else if (action === 'export-json') exportJson();
+  else if (action === 'import-json') $('file-import').click();
+});
+
+/* =========================================================
+   ۱۰) خروجی‌ها
+   ========================================================= */
+function downloadBlob(content, filename, type) {
+  const blob = new Blob([content], { type });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+}
+function csvEscape(v) { return '"' + String(v ?? '').replace(/"/g, '""') + '"'; }
+function rowsToCsv(rows) { return '\uFEFF' + rows.map(r => r.map(csvEscape).join(',')).join('\r\n'); }
+
+/* خروجی پرداخت کارشناسان — هر کارشناس با شناسه پرداخت خودش */
+function exportPay() {
+  const list = getFilteredList();
+  const head = ['ردیف','نام شرکت','شناسه ملی','نوع پرونده','نتیجه پرونده',
+                 'کارشناس فنی','گرید کارشناس','وضعیت پرداخت','پرداخت شده؟',
+                 'شناسه پرداخت کارشناس'];
+  if (isAdmin()) head.push('دریافت از معاونت');
+  head.push('آخرین ویرایش');
+
+  const rows = [head];
+  let n = 0;
+  list.forEach(r => {
+    const ex = getExperts(r);
+    const recvTxt = isAdmin()
+      ? (r.receivedFromDeputy === true ? 'دریافت شد'
+         : r.receivedFromDeputy === false ? 'دریافت نشد' : 'نامشخص')
+      : null;
+    if (!ex.length) {
+      n++;
+      const row = [n, r.companyName, r.nationalId, r.caseType||'', r.result,
+                   '—', '—', 'بدون کارشناس', '✗', ''];
+      if (isAdmin()) row.push(recvTxt);
+      row.push(r.updatedAt ? new Date(r.updatedAt).toLocaleString('fa-IR') : '');
+      rows.push(row);
+      return;
+    }
+    ex.forEach(e => {
+      n++;
+      const row = [
+        n, r.companyName, r.nationalId, r.caseType||'', r.result,
+        e.name, e.grade, e.payStatus||'نامشخص',
+        e.payStatus === 'پرداخت شده' ? '✓' : '✗',
+        e.payId || ''
+      ];
+      if (isAdmin()) row.push(recvTxt);
+      row.push(r.updatedAt ? new Date(r.updatedAt).toLocaleString('fa-IR') : '');
+      rows.push(row);
+    });
+  });
+  downloadBlob(rowsToCsv(rows),
+    'expert-payments-' + new Date().toISOString().slice(0,10) + '.csv',
+    'text/csv;charset=utf-8');
+  toast('خروجی پرداخت کارشناسان آماده شد (' + n + ' ردیف)', 'success');
+}
+
+/* خروجی کامل */
+function exportFull() {
+  const list = getFilteredList();
+  const head = ['ردیف','نام شرکت','شناسه ملی','نوع پرونده','نتیجه',
+                 'کارشناس ۱','گرید ۱','پرداخت ۱','شناسه پرداخت ۱',
+                 'کارشناس ۲','گرید ۲','پرداخت ۲','شناسه پرداخت ۲',
+                 'کارشناس ۳','گرید ۳','پرداخت ۳','شناسه پرداخت ۳'];
+  if (isAdmin()) head.push('دریافت از معاونت');
+  head.push('آخرین ویرایش','ویرایش‌کننده');
+
+  const rows = [head];
+  list.forEach((r, i) => {
+    const ex = (r.experts||[]).slice(0,3);
+    while (ex.length < 3) ex.push({ name:'', grade:'', payStatus:'', payId:'' });
+    const row = [i+1, r.companyName, r.nationalId, r.caseType||'', r.result];
+    ex.forEach(e => {
+      row.push(
+        e.name || '',
+        e.name ? (e.grade||'A') : '',
+        e.name ? (e.payStatus||'') : '',
+        e.name ? (e.payId||'') : ''
+      );
+    });
+    if (isAdmin()) {
+      row.push(r.receivedFromDeputy === true ? 'دریافت شد'
+              : r.receivedFromDeputy === false ? 'دریافت نشد' : 'نامشخص');
+    }
+    row.push(r.updatedAt ? new Date(r.updatedAt).toLocaleString('fa-IR') : '', r.updatedBy||'');
+    rows.push(row);
+  });
+  downloadBlob(rowsToCsv(rows),
+    'companies-full-' + new Date().toISOString().slice(0,10) + '.csv',
+    'text/csv;charset=utf-8');
+  toast('خروجی کامل آماده شد', 'success');
+}
+
+function exportJson() {
+  downloadBlob(JSON.stringify(records, null, 2),
+    'backup-' + new Date().toISOString().slice(0,10) + '.json',
+    'application/json');
+  toast('پشتیبان JSON دانلود شد', 'success');
+}
+
+$('file-import').addEventListener('change', e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      records = mergeData(records, data);
+      saveLocal(); render(); pullPush();
+      toast('داده‌ها بازیابی شد', 'success');
+    } catch(err) { alert('فایل JSON نامعتبر است.'); }
+  };
+  reader.readAsText(f);
+  e.target.value = '';
+});
+
+/* =========================================================
+   ۱۱) تنظیمات
+   ========================================================= */
+$('btn-settings').addEventListener('click', () => {
+  $('cfg-url').value = cfg.url;
+  $('cfg-headers').value = cfg.headers;
+  $('cfg-interval').value = cfg.interval;
+  $('modal-settings').classList.remove('hidden');
+});
+$('btn-close-settings').addEventListener('click', () => $('modal-settings').classList.add('hidden'));
+$('btn-close-settings-2').addEventListener('click', () => $('modal-settings').classList.add('hidden'));
+$('modal-settings').addEventListener('click', e => { if (e.target === $('modal-settings')) $('modal-settings').classList.add('hidden'); });
+$('btn-save-cfg').addEventListener('click', () => {
+  cfg.url = $('cfg-url').value.trim();
+  cfg.headers = $('cfg-headers').value.trim();
+  cfg.interval = Math.max(0, parseInt($('cfg-interval').value || '0', 10));
+  saveCfg();
+  $('modal-settings').classList.add('hidden');
+  startAutoSync();
+  pullPush();
+  toast('تنظیمات ذخیره شد', 'success');
+});
+
+/* =========================================================
+   ۱۲) راه‌اندازی
+   ========================================================= */
+(function init() {
+  loadCfg();
+  loadLocal();
+  const sess = sessionStorage.getItem(KEY_SESSION) || sessionStorage.getItem('coapp_session_v2');
+  if (sess) {
+    try {
+      const p = JSON.parse(sess);
+      const found = USERS.find(x => normU(x.u) === normU(p.u));
+      if (found) {
+        currentUser = { u: found.u, name: found.name, isAdmin: !!found.isAdmin };
+        enterApp();
+      }
+    } catch(e) {}
+  }
+})();
+</script>
+</body>
+</html>
